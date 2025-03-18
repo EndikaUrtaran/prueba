@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="mapea" content="yes">
+    <title>Visor base</title>
+    <link type="text/css"  href="https://componentes.cnig.es/api-core/assets/css/apiign.ol.min.css" rel="stylesheet">
+<!-- Paso 2 Descomentar las siguiente líneas--> 
+    <!-- <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/ignsearch/ignsearch.ol.min.css" rel="stylesheet" />
+    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/attributions/attributions.ol.min.css" rel="stylesheet" />
+    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/xylocator/xylocator.ol.min.css" rel="stylesheet" />
+    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/sharemap/sharemap.ol.min.css" rel="stylesheet" />
+    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/mousesrs/mousesrs.ol.min.css" rel="stylesheet" />
+    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/zoomextent/zoomextent.ol.min.css" rel="stylesheet" /> -->
+    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/toc/toc.ol.min.css" rel="stylesheet" />
+    
+    
+<!-- Estilo neutro para que la página comience sin márgenes -->
+    <style type="text/css">
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mapjs" class="m-container"></div>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/vendor/browser-polyfill.js"></script>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/js/apiign.ol.min.js"></script>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/js/configuration.js"></script>
+    
+<!-- Paso 2 Descomentar las siguiente líneas--> 
+    <!-- <script type="text/javascript"  src="https://componentes.cnig.es/api-core/plugins/ignsearch/ignsearch.ol.min.js"></script>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/plugins/attributions/attributions.ol.min.js"></script>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/plugins/xylocator/xylocator.ol.min.js"></script>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/plugins/sharemap/sharemap.ol.min.js"></script>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/plugins/zoomextent/zoomextent.ol.min.js"></script>
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/plugins/mousesrs/mousesrs.ol.min.js"></script> -->
+    <script type="text/javascript"  src="https://componentes.cnig.es/api-core/plugins/toc/toc.ol.min.js"></script>
+    <script type="text/javascript">
+
+// Se define la clase M sobre la que se construye el visualizador
+        const map = M.map({
+            container: 'mapjs',
+
+// Paso 1:  Descomentar esta línea y comentar la siguiente de forma que mostremos varios controles
+            controls: ['panzoom', 'scale*true', 'scaleline', 'rotate', 'location', 'backgroundlayers', 'getfeatureinfo'],
+            // controls: ['panzoom','scale*true'],
+            zoom: 9,
+            maxZoom: 18,
+            minZoom: 4,
+            center: [-280420.0, 5306537.0],
+        });
+
+       // const layerinicial = new M.layer.WMS({
+      //      url: 'https://www.ign.es/wms-inspire/unidades-administrativas?',
+      //      name: 'AU.AdministrativeBoundary',
+      //      legend: 'Limite administrativo',
+      //      tiled: false,
+      //  }, {});
+
+        const layerUA = new M.layer.WMS({
+            url: 'https://www.ign.es/wms-inspire/unidades-administrativas?',
+            name: 'AU.AdministrativeUnit',
+            legend: 'Unidad administrativa',
+            tiled: false
+        }, {});
+
+        const DPMT = new M.layer.WMS({
+            url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx',
+            name: 'AM.CoastalZoneManagementArea',
+            legend: 'DPMT',
+            tiled: false
+        }, {});
+
+        const SA = new M.layer.WMS({
+            url: 'https://geoserver.mitma.es/geoserver/ows?',
+            name: 'sa_envolvente_total',
+            legend: 'Servidumbres Aeronáuticas envolvente',
+            tiled: false
+        }, {});
+
+        const SAA = new M.layer.WMS({
+            url: 'https://geoserver.mitma.es/geoserver/ows?',
+            name: 'saerogenerador_envolvente_total',
+            legend: 'Servidumbres Aeronáuticas Aerogeneradores',
+            tiled: false
+        }, {});
+
+        const ffccRFIG = new M.layer.WMS({
+            url: 'http://ideadif.adif.es/services/wms?',
+            name: 'TN.RailTransportNetwork.RailwayLink',
+            legend: 'Ferrocarril (RFIG)',
+            tiled: false
+        }, {});
+
+        const ffcctramificacion = new M.layer.WMS({
+            url: 'https://ideadif.adif.es/gservices/Tramificacion/wms?',
+            name: 'TramificacionComun',
+            legend: 'Ferrocarril tramificacion comun',
+            tiled: false
+        }, {});
+        
+        //const ocupacionSuelo = new M.layer.WMTS({
+          //  url: 'https://wmts-mapa-lidar.idee.es/lidar',
+          //  name: 'EL.GridCoverageDSM',
+          //  legend: 'Modelo Digital de Superficies LiDAR',
+          //  matrixSet: 'GoogleMapsCompatible',
+          //  visibility: false,
+        //}, {}); 
+
+
+        //const kml = new M.layer.KML('KML*Delegaciones IGN*https://www.ign.es/web/resources/delegaciones/delegacionesIGN.kml*false*false*true');
+
+// Paso 3: Añadir la capa kml
+        // map.addLayers([ocupacionSuelo, layerinicial, layerUA, kml]);
+        map.addLayers([ layerUA, DPMT, SA, SAA, ffccRFIG, ffcctramificacion]);
+
+// Paso 4: Añadir el plugin backimglayer desde https://github.com/administradorcnig/APICore/blob/master/api-ign-js/src/plugins/backimglayer/README.md
+        // const mp = new M.plugin.IGNSearch({
+        //     servicesToSearch: 'gn',
+        //     maxResults: 10,
+        //     isCollapsed: false,
+        //     noProcess: 'municipio,poblacion',
+        //     countryCode: 'es',
+        //     reverse: true,
+        // });
+        // const mp2 = new M.plugin.Attributions({
+        //     mode: 1,
+        //     scale: 10000,
+        // });
+
+        // const mp3 = new M.plugin.ShareMap({
+        //     baseUrl: 'https://componentes.cnig.es/api-core/',
+        //     position: 'BR',
+        // });
+        // const mp4 = new M.plugin.XYLocator({
+        //     position: 'TL',
+        // });
+        // const mp6 = new M.plugin.ZoomExtent();
+        // const mp7 = new M.plugin.MouseSRS({
+        //     srs: 'EPSG:4326',
+        //     label: 'WGS84',
+        //     precision: 6,
+        //     geoDecimalDigits: 4,
+        //     utmDecimalDigits: 2,
+        // });
+
+        const mp8 = new M.plugin.TOC({
+            collapsed: true,
+        });
+
+        // map.addPlugin(mp);
+        // map.addPlugin(mp2);
+        // map.addPlugin(mp3);
+        // map.addPlugin(mp4);
+        // map.addPlugin(mp6);
+        // map.addPlugin(mp7);
+        map.addPlugin(mp8);
+    </script>
+</body>
+
+</html>
