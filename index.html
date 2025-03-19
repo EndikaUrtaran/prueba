@@ -1,161 +1,129 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="mapea" content="yes">
-    <title>Visor Cartográfico Integrado</title>
+    <title>Visor base</title>
+    <link type="text/css"  href="https://componentes.cnig.es/api-core/assets/css/apiign.ol.min.css" rel="stylesheet">
+    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/layerswitcher/layerswitcher.ol.min.css" rel="stylesheet" />
     
-    <!-- Hojas de estilo -->
-    <link rel="stylesheet" href="https://componentes.cnig.es/api-core/assets/css/apiign.ol.min.css">
-    <link rel="stylesheet" href="https://componentes.cnig.es/api-core/plugins/layerswitcher/layerswitcher.ol.min.css">
-    
-    <style>
+    <style type="text/css">
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
-            font-family: Arial, sans-serif;
         }
         #mapjs {
             width: 100%;
             height: 100%;
             position: absolute;
-            background: #f0f0f0;
-        }
-        .m-layerswitcher {
-            top: 65px;
         }
     </style>
 </head>
 
 <body>
     <div id="mapjs" class="m-container"></div>
+    
+    <script type="text/javascript" src="https://componentes.cnig.es/api-core/vendor/browser-polyfill.js"></script>
+    <script type="text/javascript" src="https://componentes.cnig.es/api-core/js/apiign.ol.min.js"></script>
+    <script type="text/javascript" src="https://componentes.cnig.es/api-core/js/configuration.js"></script>
+    <script type="text/javascript" src="https://componentes.cnig.es/api-core/plugins/layerswitcher/layerswitcher.ol.min.js"></script>
 
-    <!-- Scripts -->
-    <script src="https://componentes.cnig.es/api-core/vendor/browser-polyfill.js"></script>
-    <script src="https://componentes.cnig.es/api-core/js/apiign.ol.min.js"></script>
-    <script src="https://componentes.cnig.es/api-core/plugins/layerswitcher/layerswitcher.ol.min.js"></script>
-
-    <script>
-        // 1. Configuración inicial del mapa
+    <script type="text/javascript">
         const map = M.map({
             container: 'mapjs',
-            controls: ['panzoom', 'scale*true', 'scaleline', 'rotate', 'backgroundlayers', 'getfeatureinfo'],
+            controls: ['panzoom', 'scale*true', 'scaleline', 'rotate', 'location', 'backgroundlayers', 'getfeatureinfo'],
             zoom: 9,
-            maxZoom: 20,
+            maxZoom: 18,
             minZoom: 4,
-            center: [-280420.0, 5306537.0],  // Coordenadas ETRS89
-            projection: 'EPSG:25830*',
-            crossorigin: 'anonymous'
+            center: [-280420.0, 5306537.0],
         });
 
-        // 2. Función para crear capas WMS con proxy seguro
-        const createWMSLayer = (config) => {
-            return new M.layer.WMS({
-                url: `https://corsproxy.cnig.es/${encodeURIComponent(config.url)}`,
-                name: config.name,
-                legend: config.legend,
-                version: '1.3.0',
-                format: 'image/png',
-                transparent: true,
-                attributions: config.attributions || ''
-            }, {
-                opacity: config.opacity || 1,
-                tiled: config.tiled || false,
-                visibility: config.visibility !== false
-            });
-        };
-
-        // 3. Definición de capas
-        const layersConfig = [
-            {
-                type: 'WMS',
-                url: 'https://wms.mapama.gob.es/sig/Agua/AmbitosGestion/wms.aspx',
-                name: 'AM.RiverBasinDistrict',
-                legend: 'Organismos de Cuenca',
-                opacity: 0.5,
-                zIndex: 5
-            },
-            {
-                type: 'WMS',
-                url: 'https://ideadif.adif.es/services/wms',
-                name: 'TN.RailTransportNetwork.RailwayLink',
-                legend: 'Red Ferroviaria (RFIG)',
-                attributions: '© ADIF',
-                zIndex: 7
-            },
-            {
-                type: 'WMS',
-                url: 'https://ideadif.adif.es/gservices/Tramificacion/wms',
-                name: 'TramificacionComun',
-                legend: 'Tramificación Ferroviaria',
-                attributions: '© ADIF',
-                zIndex: 6
-            },
-            {
-                type: 'WMS',
-                url: 'https://www.ign.es/wms-inspire/unidades-administrativas',
-                name: 'AU.AdministrativeUnit',
-                legend: 'Límites Administrativos',
-                zIndex: 3
-            },
-            {
-                type: 'WMS',
-                url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx',
-                name: 'AM.CoastalZoneManagementArea',
-                legend: 'Dominio Público Marítimo',
-                zIndex: 4
-            },
-            {
-                type: 'WMS',
-                url: 'https://geoserver.mitma.es/geoserver/ows',
-                name: 'sa_envolvente_total',
-                legend: 'Servidumbres Aeronáuticas',
-                zIndex: 2
-            }
-        ];
-
-        // 4. Carga de capas con manejo de errores
-        layersConfig.forEach(config => {
-            try {
-                const layer = createWMSLayer(config);
-                layer.setZIndex(config.zIndex);
-                map.addLayers(layer);
-            } catch (error) {
-                console.error(`Error cargando capa ${config.legend}:`, error);
-            }
+        // Capa Organismos de Cuenca (transparencia corregida)
+        const organismoscuenca = new M.layer.WMS({
+            url: 'https://wms.mapama.gob.es/sig/Agua/AmbitosGestion/wms.aspx',
+            name: 'AM.RiverBasinDistrict',
+            legend: 'Organismos de Cuenca hidrográfica',
+            transparent: true,
+            format: 'image/png',
+        }, {
+            opacity: 0.5,
+            tiled: false,
         });
 
-        // 5. Configuración avanzada del layerswitcher
+        // Capas Adif con proxy CORS y formato PNG
+        const ffccRFIG = new M.layer.WMS({
+            url: 'https://corsproxy.io/?https://ideadif.adif.es/services/wms',
+            name: 'TN.RailTransportNetwork.RailwayLink',
+            legend: 'Ferrocarril (RFIG)',
+            format: 'image/png',
+            transparent: true,
+        }, {
+            tiled: false,
+        });
+
+        const ffcctramificacion = new M.layer.WMS({
+            url: 'https://corsproxy.io/?https://ideadif.adif.es/gservices/Tramificacion/wms',
+            name: 'TramificacionComun',
+            legend: 'Ferrocarril tramificacion comun',
+            format: 'image/png',
+            transparent: true,
+        }, {
+            tiled: false,
+        });
+
+        // Resto de capas (todas con formato PNG)
+        const layerUA = new M.layer.WMS({
+            url: 'https://www.ign.es/wms-inspire/unidades-administrativas?',
+            name: 'AU.AdministrativeUnit',
+            legend: 'Unidad administrativa',
+            format: 'image/png',
+            transparent: true,
+        }, {
+            tiled: false,
+        });
+
+        const DPMT = new M.layer.WMS({
+            url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx',
+            name: 'AM.CoastalZoneManagementArea',
+            legend: 'DPMT',
+            format: 'image/png',
+            transparent: true,
+        }, {
+            tiled: false,
+        });
+
+        const SA = new M.layer.WMS({
+            url: 'https://geoserver.mitma.es/geoserver/ows?',
+            name: 'sa_envolvente_total',
+            legend: 'Servidumbres Aeronáuticas envolvente',
+            format: 'image/png',
+            transparent: true,
+        }, {
+            tiled: false,
+        });
+
+        const SAA = new M.layer.WMS({
+            url: 'https://geoserver.mitma.es/geoserver/ows?',
+            name: 'saerogenerador_envolvente_total',
+            legend: 'Servidumbres Aeronáuticas Aerogeneradores',
+            format: 'image/png',
+            transparent: true,
+        }, {
+            tiled: false,
+        });
+
+        // Añadir todas las capas
+        map.addLayers([organismoscuenca, layerUA, DPMT, SA, SAA, ffccRFIG, ffcctramificacion]);
+
+        // Plugin Layerswitcher (actualizado)
         const layerswitcher = new M.plugin.Layerswitcher({
             collapsed: true,
-            collapsible: true,
-            tooltip: 'Gestor de capas',
-            order: 'reverse'
         });
-        
         map.addPlugin(layerswitcher);
-
-        // 6. Optimización de rendimiento
-        map.on(M.evt.LOADED, () => {
-            map.getMapImpl().on('rendercomplete', () => {
-                console.log('Renderización completada');
-            });
-            
-            // Precarga de capas base
-            M.layer.WMS.getLayers('https://www.ign.es/wms-inspire/ign-base').then(layers => {
-                layers.forEach(layer => layer.setVisibility(false));
-            });
-        });
-
-        // 7. Manejo de errores global
-        window.addEventListener('error', e => {
-            console.error('Error global:', e.error);
-            alert('Error crítico: ' + e.message);
-        });
     </script>
 </body>
 </html>
