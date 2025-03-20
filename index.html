@@ -77,17 +77,17 @@
 
         // Resto de capas (todas con formato PNG)
        
-        const layerUA = new M.layer.WMS({
-            url: 'https://www.ign.es/wms-inspire/unidades-administrativas?',
-            name: 'AU.AdministrativeUnit',
-            legend: 'Unidades Administrativas',
-            format: 'image/png',
-            transparent: true,
-            styles: 'ua-comparador',  // Nombre del estilo predefinido
-            crs: 'EPSG:3857'         // Especificar el CRS si es necesario
-        }, {
-            tiled: false,
-        });
+          const layerUA = new M.layer.WMS({
+    url: 'https://www.ign.es/wms-inspire/unidades-administrativas?',
+    name: 'AU.AdministrativeUnit',
+    legend: 'Unidad administrativa',
+    format: 'image/png',
+    transparent: true,
+    styles: 'ua-comparador',
+    crs: 'EPSG:3857'  // Especificar el CRS si es necesario
+}, {
+    tiled: false,
+});
         
         const DPMT = new M.layer.WMS({
             url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx',
