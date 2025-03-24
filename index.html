@@ -66,16 +66,16 @@
             crossOrigin: null
         });
 
-       // const ffcctramificacion = new M.layer.WMS({
-        //    url: 'https://ideadif.adif.es/gservices/Tramificacion/wms',
-         //   name: 'TramificacionComun',
-         //   legend: 'Ferrocarril tramificacion comun',
-          //  format: 'image/png',
-        //    transparent: true,
-      //  }, {
-       //     tiled: false,
-       //     crossOrigin: null
-      //  });
+       const ffcctramificacion = new M.layer.WMS({
+            url: 'https://ideadif.adif.es/gservices/Tramificacion/wms',
+            name: 'TramificacionComun',
+            legend: 'Ferrocarril tramificacion comun',
+            format: 'image/png',
+            transparent: true,
+        }, {
+           tiled: false,
+           crossOrigin: null
+        });
 
         // Resto de capas (todas con formato PNG)
        
@@ -122,7 +122,7 @@
         });
 
         // Añadir todas las capas
-        mapjs.addLayers([organismoscuenca, layerUA, DPMT, SA, SAA, ffccRFIG]);
+        map.addLayers([organismoscuenca, layerUA, DPMT, SA, SAA, ffccRFIG]);
 
         // Plugin Layerswitcher (actualizado)
         const layerswitcher = new M.plugin.Layerswitcher({
