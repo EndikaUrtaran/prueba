@@ -54,7 +54,7 @@
             tiled: false,
         });
 
-        // Capas Adif con proxy CORS y formato PNG
+        // Capas Adif y formato PNG
         const ffccRFIG = new M.layer.WMS({
             url: 'https://ideadif.adif.es/services/wms',
             name: 'TN.RailTransportNetwork.RailwayLink',
@@ -122,7 +122,7 @@
         });
 
         // Añadir todas las capas
-        map.addLayers([organismoscuenca, layerUA, DPMT, SA, SAA, ffccRFIG, ffcctramificacion]);
+        mapjs.addLayers([organismoscuenca, layerUA, DPMT, SA, SAA, ffccRFIG, ffcctramificacion]);
 
         // Plugin Layerswitcher (actualizado)
         const layerswitcher = new M.plugin.Layerswitcher({
