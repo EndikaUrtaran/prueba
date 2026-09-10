@@ -1,53 +1,183 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="mapea" content="yes">
     <title>Informes AGE sobre planeamiento urbanístico en Euskadi</title>
-    <link type="text/css" href="https://componentes.cnig.es/api-core/assets/css/apiign.ol.min.css" rel="stylesheet">
-    <link type="text/css" href="https://componentes.cnig.es/api-core/plugins/layerswitcher/layerswitcher.ol.min.css" rel="stylesheet" />
-    
+    <link type="text/css" href="https://componentes.idee.es/api-idee/assets/css/apiidee.ol.min.css" rel="stylesheet">
+    <link type="text/css" href="https://componentes.idee.es/api-idee/plugins/layerswitcher/layerswitcher.ol.min.css"
+        rel="stylesheet" />
+    <link href="https://componentes.idee.es/api-idee/plugins/help/help.ol.min.css" rel="stylesheet" />
+    <link href="https://componentes.idee.es/api-idee/plugins/vectorsmanagement/vectorsmanagement.ol.min.css"
+        rel="stylesheet" />
+
+
     <style type="text/css">
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
         }
+
         #mapjs {
             width: 100%;
             height: 100%;
             position: absolute;
         }
+
+        #cabecera {
+             position: absolute;
+            top: 0px;
+            left: 5%;
+            z-index: 1000;
+            /* Asegura que el logo esté sobre el mapa */
+            /*background: transparent;
+            /* Sin fondo para no ocupar espacio */
+            display: flex;
+            justify-content: left;
+            height: 80px;
+           / background-color: #364b5f;
+            /* Permite hacer clic a través de la imagen */
+            pointer-events: none;
+            /* Opcional: un poco de transparencia si se desea */
+            opacity: 0.75;
+            
+        }
+   
+
+
     </style>
 </head>
 
 <body>
-    <div id="mapjs" class="m-container"></div>
-    
-    <script type="text/javascript" src="https://componentes.cnig.es/api-core/vendor/browser-polyfill.js"></script>
-    <script type="text/javascript" src="https://componentes.cnig.es/api-core/js/apiign.ol.min.js"></script>
-    <script type="text/javascript" src="https://componentes.cnig.es/api-core/js/configuration.js"></script>
-    <script type="text/javascript" src="https://componentes.cnig.es/api-core/plugins/layerswitcher/layerswitcher.ol.min.js"></script>
+    <!-- Div cabecera -->
+    <div id="cabecera">
+       <!--<div class="left">
+        //    <a href="https://www.ign.es/web/inicio">
+         //       <img id="MinisterioImg" src="https://componentes.idee.es/estaticos/imagenes/logos/logo_ge.svg"
+         //           height="100%">
+          //  </a>
+        //</div>-->
+       <div class="left">
+           <img id="tituloImg" src="S:\afomento\VISOR\01 LOGOS\Logo Delegacion mini.PNG" height="100%">
+        </div>
+    </div>
 
+    <div id="mapjs" class="m-container"></div>
+    <script type="text/javascript" src="https://componentes.idee.es/api-idee/vendor/browser-polyfill.js"></script>
+    <script type="text/javascript" src="https://componentes.idee.es/api-idee/js/apiidee.ol.min.js"></script>
+    <script type="text/javascript" src="https://componentes.idee.es/api-idee/js/configuration.js"></script>
+    <script type="text/javascript"
+        src="https://componentes.idee.es/api-idee/plugins/layerswitcher/layerswitcher.ol.min.js"></script>
+    <script type="text/javascript" src="https://componentes.idee.es/api-idee/plugins/help/help.ol.min.js"></script>
+    <script type="text/javascript"
+        src="https://componentes.idee.es/api-idee/plugins/vectorsmanagement/vectorsmanagement.ol.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/osmtogeojson/osmtogeojson.min.js"></script> -->
     <script type="text/javascript">
-        const map = M.map({
+
+        const map = IDEE.map({
             container: 'mapjs',
             controls: ['panzoom', 'scale*true', 'scaleline', 'rotate', 'location', 'backgroundlayers', 'getfeatureinfo'],
             zoom: 9,
             maxZoom: 18,
             minZoom: 4,
             center: [-280420.0, 5306537.0],
+            zoomConstrains: true,
+
+            //IDEE.proxy(false) // Necesario para ejecutar el visualizador en local.
         });
 
+        // // Capa Red Electrica OSM (carga dinámica con Overpass API y osmtogeojson)
+        // function getBbox() {
+        //     if (map.getZoom() > 11) {
+        //         const extent = map.getBbox();
+        //         console.log("BBOX EPSG:3857:", extent);
+        //         const extent4326 = ol.proj.transformExtent([extent.x.min, extent.y.min, extent.x.max, extent.y.max], 'EPSG:3857', 'EPSG:4326');
+        //         console.log("BBOX EPSG:4326 :", extent4326);
+        //         return `${extent4326[1]},${extent4326[0]},${extent4326[3]},${extent4326[2]}`;
+        //     } else {
+        //         return null;
+        //     }
+        // }
+
+        // function cargarRedElectrica() {
+        //     const bbox = getBbox();
+        //     console.log("BBOX :", bbox);
+        //     if (!bbox) {
+        //         // No hacer la petición si bbox es null
+        //         return;
+        //     }
+        //     const overpassQuery = `[out:json][timeout:25];
+        // (
+        // way["power"="line"](${bbox});
+        // relation["power"="line"](${bbox});
+        // way["power"="substation"](${bbox});
+        // relation["power"="substation"](${bbox});
+        // node["power"="tower"](${bbox});
+        // node["power"="pole"](${bbox});
+        // );
+        // out;`;
+
+        //     const url = 'https://overpass-api.de/api/interpreter';
+
+        //     fetch(url, {
+        //         method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        //         headers: {
+        //         'Content-Type': 'application/json'
+        //         },
+        //         body: overpassQuery
+        //     })
+        //     .then(response => {
+        //         if (!response.ok) throw new Error('Error al conectar con el servidor Overpass');
+        //         return response.json();
+        //     })
+        //     .then(osmData => {
+        //         const geojsonData = osmtogeojson(osmData);
+        //         console.log("geojson:", geojsonData);
+                
+        //         const layer = map.getLayers().find(l => l.name === 'red electrica');
+        //         if(layer) {
+        //             if(geojsonData.features.length > 0) {
+        //                 layer?.clear();
+        //                 layer.setSource(geojsonData);
+        //             }
+        //         } else {
+        //             map.addLayers(new IDEE.layer.GeoJSON({
+        //                 name: 'red electrica',
+        //                 source: geojsonData,
+        //                 legend: 'redes electricas',
+        //                 extract: true,
+        //             }, {
+        //                 // minZoom: 13,
+        //                 displayInLayerSwitcher: true,
+        //                 visibility: true,
+        //             }));
+        //         }
+                
+        //     })
+        //     .catch(error => console.warn('Error cargando la red eléctrica:', error));
+        // }
+
+        
+        // map.getMapImpl().once('postrender', () => {
+        //     // Llama la primera vez
+        //     cargarRedElectrica();
+        //     // Vuelve a llamar cada vez que el usuario cambie el zoom o mueva el mapa
+        //     map.on(IDEE.evt.CHANGE_ZOOM, cargarRedElectrica);
+        //     map.on(IDEE.evt.MOVE_END, cargarRedElectrica);
+        // });
+
         // Capa Organismos de Cuenca (transparencia corregida)
-        const organismoscuenca = new M.layer.WMS({
-            url: 'https://wms.mapama.gob.es/sig/Agua/AmbitosGestion/wms.aspx',
-            name: 'AM.RiverBasinDistrict',
+        const organismoscuenca = new IDEE.layer.WMS({
+            url: 'https://gis.miteco.gob.es/geoserver/agua/ows',
+                        name: 'ambitos_oocc',
             legend: 'Confederaciones Hidrograficas',
-            transparent: true,
+            isBase: false,
             format: 'image/png',
         }, {
             opacity: 0.4,
@@ -55,42 +185,44 @@
         });
 
         // Capa Ferrocarril RFIG (Ajuste clave: CRS y parámetros WMS)
-        const ffccRFIG = new M.layer.WMS({
+        const ffccRFIG = new IDEE.layer.WMS({
             url: 'https://ideadif.adif.es/services/wms',
             name: 'TN.RailTransportNetwork.RailwayLink',
             legend: 'Ferrocarril (RFIG)',
             format: 'image/png',
-            transparent: true,
+            isBase: false,
             version: '1.3.0',
             crs: 'EPSG:4326',  // Coincide con proyección del mapa
             isBase: false,
-            useCapabilities:false
+            useCapabilities: false
         }, {
             tiled: false,
             opacity: 0.5,
             crossOrigin: null
         });
 
-        const ffcctramificacion = new M.layer.WMS({
+        const ffcctramificacion = new IDEE.layer.WMS({
             url: 'https://ideadif.adif.es/gservices/Tramificacion/wms',
             name: 'TramosServicio',
             legend: 'Ferrocarriles (RFIG en servicio)',
             format: 'image/png',
-            transparent: true,
-            useCapabilities:false
+            isBase: false,
+            useCapabilities: false,
+            displayInLayerSwitcher: true,
         }, {
             tiled: false,
             opacity: 0.7,
             crossOrigin: null
         });
 
-        const ffcctramificacion2 = new M.layer.WMS({
+        const ffcctramificacion2 = new IDEE.layer.WMS({
             url: 'https://ideadif.adif.es/gservices/Tramificacion/wms',
             name: 'TramosFueraServicio',
             legend: 'Ferrocarriles (RFIG fuera servicio)',
             format: 'image/png',
-            transparent: true,
-            useCapabilities:false
+            isBase: false,
+            useCapabilities: false,
+            displayInLayerSwitcher: true,
         }, {
             tiled: false,
             opacity: 0.3,
@@ -98,162 +230,272 @@
         });
 
         // Capa de Unidades Administrativas con estilo 'ua-comparador' (CORRECCIÓN)
-        const layerUA = new M.layer.WMS({
+        const layerUA = new IDEE.layer.WMS({
             url: 'https://www.ign.es/wms-inspire/unidades-administrativas?',
             name: 'AU.AdministrativeUnit',
             legend: 'Limites administrativos',
             format: 'image/png',
-            transparent: true,
+            isBase: false,
             version: '1.3.0',         // Versión explícita del WMS
-            crs: 'EPSG:3857'          // CRS del mapa
-        }, {
-            tiled: false,
-            styles: 'ua-comparador',  // Nombre exacto del estilo
-        });
-        
-        const DPMT = new M.layer.WMS({
-            url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx',
-            name: 'AM.CoastalZoneManagementArea',
-            legend: 'Costas (DPMT)',
-            format: 'image/png',
-            transparent: true,
+            crs: 'EPSG:3857',          // CRS del mapa
+            styles: 'ua-comparador'  // Nombre exacto del estilo
         }, {
             tiled: false,
         });
 
-        const SA = new M.layer.WMS({
-            url: 'https://geoserver.mitma.es/geoserver/ows?',
+        const DPMT = new IDEE.layer.WMS({
+            url: 'https://gis.miteco.gob.es/geoserver/costas/dominio_publico_maritimo_terrestre/wms',
+            name: 'dominio_publico_maritimo_terrestre',
+            legend: 'Costas (DPMT)',
+            format: 'image/png',
+            isBase: false,
+        }, {
+            tiled: false,
+        });
+
+        const SA = new IDEE.layer.WMS({
+            url: 'https://plinur.transportes.gob.es/gis/ows?',
             name: 'sa_envolvente_total',
             legend: 'Aviación Civil (Servidumbres Aeronáuticas envolvente)',
             format: 'image/png',
-            transparent: true,
+            isBase: false,
         }, {
             tiled: false,
         });
 
-        const SAA = new M.layer.WMS({
-            url: 'https://geoserver.mitma.es/geoserver/ows?',
+        const SAA = new IDEE.layer.WMS({
+            url: 'https://plinur.transportes.gob.es/gis/ows?',
             name: 'saerogenerador_envolvente_total',
             legend: 'Aviación Civil (Aerogeneradores Servidumbres Aeronáuticas',
             format: 'image/png',
-            transparent: true,
+            isBase: false,
         }, {
             tiled: false,
         });
-        
-        const Munexen = new M.layer.WMS({
-            url: 'https://geoserver.mitma.es/geoserver/ows?',
+
+        const Munexen = new IDEE.layer.WMS({
+            url: 'https://plinur.transportes.gob.es/gis/ows?',
             name: 'ssaa_municipios_exentos',
             legend: 'Municipios exentos informe Aviación Civil',
             format: 'image/png',
-            transparent: true,
+            isBase: false,
         }, {
             tiled: false,
-             opacity: 0.7,
+            opacity: 0.7,
         });
-        
+
         // CAPA GEOJSON AÑADIDA - ZIDN Euskadi    
-        const ZIDNEuskadi = new M.layer.GeoJSON({
+        const ZIDNEuskadi = new IDEE.layer.GeoJSON({
             name: 'Zonas de Interés para la Defensa Nacional en Euskadi',
-            url: 'https://raw.githubusercontent.com/EndikaUrtaran/prueba/refs/heads/main/ZIDN Euskadi.geojson',
+            url: 'https://raw.githubusercontent.com/Delegacion-Gobierno-Pais-Vasco/informesAGE/refs/heads/main/ZIDN%20Euskadi.geojson',
             legend: 'ZIDNEuskadi (Defensa)',
             extract: true,
-            transparent: true,
-            displayInLayerSwitcher : true
-                  
-            
+            isBase: false,
+            displayInLayerSwitcher: true
         }, {
-            style: new M.style.Polygon({
-                fill: {
-                    color: 'rgba(189, 183, 107, 1)',
-                    transparent: true,
-                    opacity: 0.4,    
+            style: new IDEE.style.Generic({
+                polygon: {
+                    fill: {
+                        color: 'rgba(189, 183, 107, 1)',
+                        isBase: false,
+                        opacity: 0.4,
+                    },
+                    stroke: {
+                        color: '#BDB76B',
+                        width: 2,
+                        isBase: false
+                    }
                 },
-                stroke: {
-                    color: '#BDB76B',
-                    width: 2,
-                    transparent: true
-                }
-            
             }),
-           
-        }); 
+        });
 
         // CAPA GEOJSON AÑADIDA - Zonas de Seguridad Euskadi    
-        const ZonasSeguridadEuskadi = new M.layer.GeoJSON({
+        const ZonasSeguridadEuskadi = new IDEE.layer.GeoJSON({
             name: 'Zonas de Seguridad próximas y lejanas en Euskadi (Defensa)',
-            url: 'https://raw.githubusercontent.com/EndikaUrtaran/prueba/refs/heads/main/Zonas de Seguridad Euskadi.geojson',
+            url: 'https://raw.githubusercontent.com/Delegacion-Gobierno-Pais-Vasco/informesAGE/refs/heads/main/Zonas%20de%20Seguridad%20Euskadi.geojson',
             legend: 'Zonas de Seguridad Euskadi (Defensa)',
             extract: true,
-            transparent: true,
-            displayInLayerSwitcher : true
-                  
-            
+            isBase: false,
+            displayInLayerSwitcher: true
         }, {
-            style: new M.style.Polygon({
-                fill: {
-                    color: 'rgba(189, 183, 107, 1)',
-                    transparent: true,
-                    opacity: 0.2,    
-                },
-                stroke: {
-                    color: '#BDB76B',
-                    width: 2,
-                    transparent: true
+            style: new IDEE.style.Generic({
+                polygon: {
+                    fill: {
+                        color: 'rgba(189, 183, 107, 1)',
+                        isBase: false,
+                        opacity: 0.2,
+                    },
+                    stroke: {
+                        color: '#BDB76B',
+                        width: 2,
+                        isBase: false
+                    }
                 }
-            
             }),
-           
-        }); 
-         // CAPA GEOJSON AÑADIDA - Buffer de 100m en torno al ferrocarril en Servicio  y Fuera de Servicio  
-        const Buffer100FFCC = new M.layer.GeoJSON({
+        });
+        // CAPA GEOJSON AÑADIDA - Buffer de 100m en torno al ferrocarril de la RFIG en Servicio  y Fuera de Servicio  
+        const Buffer100FFCC = new IDEE.layer.GeoJSON({
             name: 'Buffer de 100m en torno a la RFIG del ferrocarril en servicio y fuera de servicio en Euskadi. A modo orientativo, si afecta a esta zona se debe solicitar el informe sectorial de ferrocarriles',
             url: 'https://raw.githubusercontent.com/EndikaUrtaran/prueba/refs/heads/main/Buffer100mFFCCenservicio y fueraservicio.geojson',
-            legend: 'Buffer 100m ferrocarril Euskadi',
+            legend: 'Buffer 100m ferrocarril RFIG Euskadi',
             extract: true,
-            transparent: true,
-            displayInLayerSwitcher : true
-                  
-            
+            isBase: false,
+            displayInLayerSwitcher: false,
+            visibility: false,
+            display: false
         }, {
-            style: new M.style.Polygon({
-                fill: {
-                    color: 'rgba(211, 211, 211, 1)',
-                    transparent: true,
-                    opacity: 0.2,    
-                },
-                stroke: {
-                    color: '#D3D3D3',
-                    width: 2,
-                    transparent: true
+            displayInLayerSwitcher: true,
+            style: new IDEE.style.Generic({
+                polygon: {
+                    fill: {
+                        color: 'rgba(211, 211, 211, 1)',
+                        isBase: false,
+                        opacity: 0.8,
+                    },
+                    stroke: {
+                        color: '#D3D3D3',
+                        width: 2,
+                        isBase: false
+                    },
                 }
-            
             }),
-           
-        }); 
-     
-        
-                // Añadir capas al mapa (incluyendo las nuevas capas GeoJSON)
+        });
+ // CAPA GEOJSON AÑADIDA - Buffer de 100m en torno a los estudios informativos de ferrocarril aprobados definitivamente en Euskadi  
+        const Buffer100estudiosaprobados = new IDEE.layer.GeoJSON({
+            name: 'Buffer de 100m en torno a los estudios informativos de ferrocarril aprobados definitivamente en Euskadi . A modo orientativo, si afecta a esta zona se debe solicitar el informe sectorial de ferrocarriles',
+            url: 'https://raw.githubusercontent.com/EndikaUrtaran/prueba/refs/heads/main/buffer100m estudios aprobados Euskadi.geojson',
+            legend: 'Buffer 100m Estudios aprobados Euskadi',
+            extract: true,
+            isBase: false,
+            displayInLayerSwitcher: false,
+            visibility: false,
+            display: false
+        }, {
+            displayInLayerSwitcher: true,
+            style: new IDEE.style.Generic({
+                polygon: {
+                    fill: {
+                        color: 'rgba(211, 211, 211, 1)',
+                        isBase: false,
+                        opacity: 0.8,
+                    },
+                    stroke: {
+                        color: '#D3D3D3',
+                        width: 2,
+                        isBase: false
+                    },
+                }
+            }),
+        });
+ // CAPA GEOJSON AÑADIDA - Buffer de 100m en torno a los estudios informativos de ferrocarril aprobados definitivamente en Euskadi  
+        const Buffer100estudiostramitacion = new IDEE.layer.GeoJSON({
+            name: 'Buffer de 100m en torno a los estudios informativos de ferrocarril en tramitacion o aprobados como avance en Euskadi . A modo orientativo, si afecta a esta zona se debe solicitar el informe sectorial de ferrocarriles',
+            url: 'https://raw.githubusercontent.com/EndikaUrtaran/prueba/refs/heads/main/buffer100m estudios tramitacion Euskadi.geojson',
+            legend: 'Buffer 100m Estudios tramitacion Euskadi',
+            extract: true,
+            isBase: false,
+            displayInLayerSwitcher: false,
+            visibility: false,
+            display: false
+        }, {
+            displayInLayerSwitcher: true,
+            style: new IDEE.style.Generic({
+                polygon: {
+                    fill: {
+                        color: 'rgba(211, 211, 211, 1)',
+                        isBase: false,
+                        opacity: 0.8,
+                    },
+                    stroke: {
+                        color: '#D3D3D3',
+                        width: 2,
+                        isBase: false
+                    },
+                }
+            }),
+        });
+        // Crear un grupo de capas
+
+        // Añadir capas al mapa (incluyendo las nuevas capas GeoJSON)
+
         map.addLayers([
-            organismoscuenca, 
+            organismoscuenca,
             layerUA,
-            DPMT, 
-            ZIDNEuskadi,  // Capa GeoJSON 
-            ZonasSeguridadEuskadi, // Capa GeoJSON
-            Munexen,
-            SAA,
-            SA, 
-            Buffer100FFCC,
-            ffcctramificacion2, 
-            ffcctramificacion                
+            DPMT,
+            //ffccRFIG, 
+            //ZIDNEuskadi,  // Capa GeoJSON 
+            //ZonasSeguridadEuskadi, // Capa GeoJSON
+            //Munexen,
+            //SAA,
+            //SA, 
+            // ffcctramificacion2, 
+            //ffcctramificacion,
+            //Buffer100FFCC                
         ]);
 
+        const Defensa = new IDEE.layer.LayerGroup({
+            name: 'Defensa',           // Nombre del grupo de capas
+            legend: 'Capas de Defensa',  // Leyenda asociada al grupo
+            layers: [ZIDNEuskadi, ZonasSeguridadEuskadi],     // Capas que pertenecen al grupo
+        });
+
+        const Ferrocarriles = new IDEE.layer.LayerGroup({
+            name: 'Ferrocarriles',           // Nombre del grupo de capas
+            legend: 'Capas de Ferrocarriles',  // Leyenda asociada al grupo
+            layers: [Buffer100estudiostramitacion, Buffer100estudiosaprobados, Buffer100FFCC, ffcctramificacion2, ffcctramificacion],     // Capas que pertenecen al grupo
+        });
+
+        const AviacionCivil = new IDEE.layer.LayerGroup({
+            name: 'AviacionCivil',           // Nombre del grupo de capas
+            legend: 'Capas de Aviación Civil',  // Leyenda asociada al grupo
+            fill: {
+                color: 'rgba(111, 111, 111, 1)',
+                isBase: false,
+                opacity: 0.2,
+            },
+
+            layers: [Munexen, SAA, SA]     // Capas que pertenecen al grupo 
+        });
+        map.addLayers([Defensa, Ferrocarriles, AviacionCivil]);
+
         // Plugin Layerswitcher
-        const layerswitcher = new M.plugin.Layerswitcher({
-            collapsed: true,
+        const layerswitcher = new IDEE.plugin.Layerswitcher({
+            //collapsed: true,
         });
         map.addPlugin(layerswitcher);
+
+        // Plugin Help
+        const mp = new IDEE.plugin.Help({
+            position: 'TL',
+            images: [
+                'https://www.ign.es/iberpix/static/media/logo.72e2e78b.png',
+            ],
+            header: {
+                title: 'Visor informes urbanisticos AGE en Euskadi',
+            },
+            extendInitialExtraContents: true,
+            initialExtraContents: [
+                {
+                    title: 'Contenido del Visor',
+                    content: '<div><h2 style="text-align:center;color:#fff;background-color:#364b5f;padding:10px;border-radius:4px;">Contenido del visor</h2><div style="padding:12px;font-family:Arial,sans-serif;line-height:1.5;"><h3 style="color:#364b5f;border-bottom:2px solid #364b5f;padding-bottom:4px;">🎯 Finalidad del visor</h3><p>El visor cartográfico tiene como finalidad <strong>facilitar la identificación rápida de posibles afecciones a la planificación territorial derivadas de las competencias de distintos organismos de la Administración General del Estado (AGE) en el País Vasco</strong>, sirviendo como herramienta de apoyo para orientar sobre los posibles informes o consultas sectoriales que puedan resultar necesarios.</p><h3 style="color:#364b5f;border-bottom:2px solid #364b5f;padding-bottom:4px;">📋 Información recogida</h3><p>El visor reúne, para el <strong>ámbito del País Vasco</strong>, diferentes capas de información territorial relacionadas con las principales materias en las que pueden existir afecciones derivadas de competencias de la Administración General del Estado.</p><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>✈️ Aviación Civil</strong><ul><li>Envolvente de las servidumbres aeronáuticas</li><li>Servidumbres aeronáuticas para aerogeneradores</li><li>Municipios exentos de informe de Aviación Civil</li></ul><p>Permite identificar posibles afecciones derivadas de la normativa sobre <strong>servidumbres aeronáuticas</strong> y orientar sobre aquellos casos en los que pueda ser necesario consultar a la <strong>Dirección General de Aviación Civil</strong>.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🚆 Ferrocarriles</strong><ul><li>Red Ferroviaria de Interés General (RFIG) en servicio</li><li>Red Ferroviaria de Interés General (RFIG) fuera de servicio</li><li>Buffer de 100 m de ferrocarril en Euskadi</li></ul><p>Facilitan la identificación de actuaciones situadas sobre o en las proximidades de líneas ferroviarias pertenecientes a la <strong>Red Ferroviaria de Interés General (RFIG)</strong>.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🛡️ Defensa</strong><ul><li>Zonas de Interés para la Defensa Nacional (ZIDN) en Euskadi</li><li>Zonas de Seguridad de Defensa en Euskadi</li></ul><p>Permiten detectar posibles afecciones a <strong>instalaciones, terrenos o zonas vinculadas al Ministerio de Defensa</strong>.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🌊 Costas</strong><ul><li>Dominio Público Marítimo-Terrestre (DPMT)</li></ul><p>Permite consultar el <strong>deslinde del Dominio Público Marítimo-Terrestre (DPMT)</strong> e identificar actuaciones afectadas por la legislación de costas.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>💧 Hidrografía</strong><ul><li>Confederaciones Hidrográficas</li></ul><p>Permite identificar los <strong>ámbitos territoriales de gestión de los organismos de cuenca</strong> con competencias en el País Vasco.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🗺️ Límites administrativos</strong><ul><li>Límites administrativos</li></ul><p>Facilita la <strong>correcta localización y delimitación de las actuaciones objeto de consulta</strong>. Además, el visor permite la carga temporal de ficheros vectoriales propios para analizar ámbitos específicos.</p></div><h3 style="color:#b22222;border-bottom:2px solid #b22222;padding-bottom:4px;">⚠️ Carácter orientativo</h3><p>Las capas incorporadas al visor constituyen una <strong>herramienta de apoyo para la consulta y detección inicial de posibles afecciones sectoriales</strong>. La presencia o ausencia de una capa, o la intersección de una actuación con ella, <strong>no determina por sí misma la obligación de solicitar un informe</strong>.</p><p>Asimismo, pueden existir informes sectoriales cuya necesidad no dependa principalmente de la localización geográfica de la actuación, como determinados informes en materia de <strong>telecomunicaciones</strong>.</p><p>La necesidad de solicitar un informe deberá determinarse en cada caso de acuerdo con la <strong>legislación vigente</strong> y los criterios establecidos por el <strong>organismo sectorial competente</strong>.</p><p style="background:#fff3cd;border:1px solid #ffe69c;padding:10px;border-radius:4px;"><strong>Importante:</strong> Los resultados obtenidos mediante el visor deben considerarse orientativos y <strong>no sustituyen la consulta de la normativa aplicable ni, cuando proceda, la consulta al organismo competente</strong>.</p></div></div>',
+                }
+            ],
+            finalExtraContents: [
+                {
+                    title: 'Aviso importante',
+                    content: '<div><h2 style="text-align:center;color:#fff;background-color:#b22222;padding:8px 10px;">⚠️ Aviso importante</h2><div style="padding:12px;line-height:1.5;"><p>• El visor tiene carácter <strong>orientativo</strong> y no sustituye la consulta de la normativa aplicable ni las consultas al organismo competente.</p><p>• Algunas capas dependen de servicios OGC externos y pueden no estar disponibles temporalmente.</p><p>• Si detecta alguna incidencia, puede comunicarla a <a href="mailto:fomento.alava@correo.gob.es">fomento.alava@correo.gob.es</a>.</p></div></div>',
+                }
+            ]
+        });
+        map.addPlugin(mp);
+
+        const mp2 = new IDEE.plugin.VectorsManagement({
+            position: 'TR',
+        });
+
+        map.addPlugin(mp2);
+
     </script>
 </body>
-</html>
 
+</html>
