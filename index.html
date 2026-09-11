@@ -201,7 +201,7 @@
             isBase: false,
         }, {
             tiled: false,
-            opacity: 0.7,
+            opacity: 0.5,
         });
 
         // CAPA GEOJSON AÑADIDA - ZIDN Euskadi    
@@ -334,6 +334,33 @@
                 }
             }),
         });
+          // CAPA GEOJSON AÑADIDA - Máscara en el exterior de Euskadi  
+        const mascaraext = new IDEE.layer.GeoJSON({
+            name: 'Máscara en el exterior de Euskadi',
+            url: 'https://raw.githubusercontent.com/EndikaUrtaran/prueba/refs/heads/main/mascara exterior euskadi.geojson',
+            legend: 'Máscara en el exterior de Euskadi',
+            extract: true,
+            isBase: false,
+            displayInLayerSwitcher: false,
+            visibility: false,
+            display: false
+        }, {
+            displayInLayerSwitcher: true,
+            style: new IDEE.style.Generic({
+                polygon: {
+                    fill: {
+                        color: 'rgba(255, 255, 255, 1)',
+                        isBase: false,
+                        opacity: 0.7,
+                    },
+                    stroke: {
+                        color: 'rgba(255,0,0, 1)',
+                        width: 1,
+                        isBase: false
+                    },
+                }
+            }),
+        });
         // Crear un grupo de capas
 
         // Añadir capas al mapa (incluyendo las nuevas capas GeoJSON)
@@ -376,7 +403,7 @@
 
             layers: [Munexen, SAA, SA]     // Capas que pertenecen al grupo 
         });
-        map.addLayers([Defensa, Ferrocarriles, AviacionCivil]);
+        map.addLayers([Defensa, Ferrocarriles, AviacionCivil, mascaraext]);
 
         // Plugin Layerswitcher
         const layerswitcher = new IDEE.plugin.Layerswitcher({
