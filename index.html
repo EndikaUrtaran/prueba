@@ -295,7 +295,7 @@
             style: new IDEE.style.Generic({
                 polygon: {
                     fill: {
-                        color: 'rgba(211, 211, 211, 1)',
+                        color: 'rgba(41,128,185,1)',
                         isBase: false,
                         opacity: 0.8,
                     },
@@ -307,7 +307,7 @@
                 }
             }),
         });
- // CAPA GEOJSON AÑADIDA - Buffer de 100m en torno a los estudios informativos de ferrocarril aprobados definitivamente en Euskadi  
+ // CAPA GEOJSON AÑADIDA - Buffer de 100m en torno a los estudios informativos de ferrocarril en tramitacion o aprobados como avance en Euskadi  
         const Buffer100estudiostramitacion = new IDEE.layer.GeoJSON({
             name: 'Buffer de 100m en torno a los estudios informativos de ferrocarril en tramitacion o aprobados como avance en Euskadi . A modo orientativo, si afecta a esta zona se debe solicitar el informe sectorial de ferrocarriles',
             url: 'https://raw.githubusercontent.com/EndikaUrtaran/prueba/refs/heads/main/buffer100m estudios tramitacion Euskadi.geojson',
@@ -322,7 +322,7 @@
             style: new IDEE.style.Generic({
                 polygon: {
                     fill: {
-                        color: 'rgba(211, 211, 211, 1)',
+                        color: 'rgba(230,126,34,1)',
                         isBase: false,
                         opacity: 0.8,
                     },
