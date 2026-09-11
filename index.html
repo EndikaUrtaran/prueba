@@ -92,86 +92,6 @@
             //IDEE.proxy(false) // Necesario para ejecutar el visualizador en local.
         });
 
-        // // Capa Red Electrica OSM (carga dinámica con Overpass API y osmtogeojson)
-        // function getBbox() {
-        //     if (map.getZoom() > 11) {
-        //         const extent = map.getBbox();
-        //         console.log("BBOX EPSG:3857:", extent);
-        //         const extent4326 = ol.proj.transformExtent([extent.x.min, extent.y.min, extent.x.max, extent.y.max], 'EPSG:3857', 'EPSG:4326');
-        //         console.log("BBOX EPSG:4326 :", extent4326);
-        //         return `${extent4326[1]},${extent4326[0]},${extent4326[3]},${extent4326[2]}`;
-        //     } else {
-        //         return null;
-        //     }
-        // }
-
-        // function cargarRedElectrica() {
-        //     const bbox = getBbox();
-        //     console.log("BBOX :", bbox);
-        //     if (!bbox) {
-        //         // No hacer la petición si bbox es null
-        //         return;
-        //     }
-        //     const overpassQuery = `[out:json][timeout:25];
-        // (
-        // way["power"="line"](${bbox});
-        // relation["power"="line"](${bbox});
-        // way["power"="substation"](${bbox});
-        // relation["power"="substation"](${bbox});
-        // node["power"="tower"](${bbox});
-        // node["power"="pole"](${bbox});
-        // );
-        // out;`;
-
-        //     const url = 'https://overpass-api.de/api/interpreter';
-
-        //     fetch(url, {
-        //         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        //         headers: {
-        //         'Content-Type': 'application/json'
-        //         },
-        //         body: overpassQuery
-        //     })
-        //     .then(response => {
-        //         if (!response.ok) throw new Error('Error al conectar con el servidor Overpass');
-        //         return response.json();
-        //     })
-        //     .then(osmData => {
-        //         const geojsonData = osmtogeojson(osmData);
-        //         console.log("geojson:", geojsonData);
-                
-        //         const layer = map.getLayers().find(l => l.name === 'red electrica');
-        //         if(layer) {
-        //             if(geojsonData.features.length > 0) {
-        //                 layer?.clear();
-        //                 layer.setSource(geojsonData);
-        //             }
-        //         } else {
-        //             map.addLayers(new IDEE.layer.GeoJSON({
-        //                 name: 'red electrica',
-        //                 source: geojsonData,
-        //                 legend: 'redes electricas',
-        //                 extract: true,
-        //             }, {
-        //                 // minZoom: 13,
-        //                 displayInLayerSwitcher: true,
-        //                 visibility: true,
-        //             }));
-        //         }
-                
-        //     })
-        //     .catch(error => console.warn('Error cargando la red eléctrica:', error));
-        // }
-
-        
-        // map.getMapImpl().once('postrender', () => {
-        //     // Llama la primera vez
-        //     cargarRedElectrica();
-        //     // Vuelve a llamar cada vez que el usuario cambie el zoom o mueva el mapa
-        //     map.on(IDEE.evt.CHANGE_ZOOM, cargarRedElectrica);
-        //     map.on(IDEE.evt.MOVE_END, cargarRedElectrica);
-        // });
-
         // Capa Organismos de Cuenca (transparencia corregida)
         const organismoscuenca = new IDEE.layer.WMS({
             url: 'https://gis.miteco.gob.es/geoserver/agua/ows',
@@ -477,7 +397,7 @@
             initialExtraContents: [
                 {
                     title: 'Contenido del Visor',
-                    content: '<div><h2 style="text-align:center;color:#fff;background-color:#364b5f;padding:10px;border-radius:4px;">Contenido del visor</h2><div style="padding:12px;font-family:Arial,sans-serif;line-height:1.5;"><h3 style="color:#364b5f;border-bottom:2px solid #364b5f;padding-bottom:4px;">🎯 Finalidad del visor</h3><p>El visor cartográfico tiene como finalidad <strong>facilitar la identificación rápida de posibles afecciones a la planificación territorial derivadas de las competencias de distintos organismos de la Administración General del Estado (AGE) en el País Vasco</strong>, sirviendo como herramienta de apoyo para orientar sobre los posibles informes o consultas sectoriales que puedan resultar necesarios.</p><h3 style="color:#364b5f;border-bottom:2px solid #364b5f;padding-bottom:4px;">📋 Información recogida</h3><p>El visor reúne, para el <strong>ámbito del País Vasco</strong>, diferentes capas de información territorial relacionadas con las principales materias en las que pueden existir afecciones derivadas de competencias de la Administración General del Estado.</p><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>✈️ Aviación Civil</strong><ul><li>Envolvente de las servidumbres aeronáuticas</li><li>Servidumbres aeronáuticas para aerogeneradores</li><li>Municipios exentos de informe de Aviación Civil</li></ul><p>Permite identificar posibles afecciones derivadas de la normativa sobre <strong>servidumbres aeronáuticas</strong> y orientar sobre aquellos casos en los que pueda ser necesario consultar a la <strong>Dirección General de Aviación Civil</strong>.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🚆 Ferrocarriles</strong><ul><li>Red Ferroviaria de Interés General (RFIG) en servicio</li><li>Red Ferroviaria de Interés General (RFIG) fuera de servicio</li><li>Buffer de 100 m de ferrocarril existente en Euskadi</li><li>Buffer de 100m en torno a los estudios informativos de ferrocarril aprobados definitivamente en Euskadi</li><li>Buffer de 100m en torno a los estudios informativos de ferrocarril en tramitacion o aprobados como avance en Euskadi</li></ul><p>Facilitan la identificación de actuaciones situadas sobre o en las proximidades de líneas ferroviarias pertenecientes a la <strong>Red Ferroviaria de Interés General (RFIG) o de Estudios informativos aprobados y sin aprobar</strong>.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🛡️ Defensa</strong><ul><li>Zonas de Interés para la Defensa Nacional (ZIDN) en Euskadi</li><li>Zonas de Seguridad de Defensa en Euskadi</li></ul><p>Permiten detectar posibles afecciones a <strong>instalaciones, terrenos o zonas vinculadas al Ministerio de Defensa</strong>.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🌊 Costas</strong><ul><li>Dominio Público Marítimo-Terrestre (DPMT)</li></ul><p>Permite consultar el <strong>deslinde del Dominio Público Marítimo-Terrestre (DPMT)</strong> e identificar actuaciones afectadas por la legislación de costas.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>💧 Hidrografía</strong><ul><li>Confederaciones Hidrográficas</li></ul><p>Permite identificar los <strong>ámbitos territoriales de gestión de los organismos de cuenca</strong> con competencias en el País Vasco.</p></div><div style="background:#f4f7fa;padding:10px;margin:8px 0;border-left:4px solid #364b5f;"><strong>🗺️ Límites administrativos</strong><ul><li>Límites administrativos</li></ul><p>Facilita la <strong>correcta localización y delimitación de las actuaciones objeto de consulta</strong>. Además, el visor permite la carga temporal de ficheros vectoriales propios para analizar ámbitos específicos.</p></div><h3 style="color:#b22222;border-bottom:2px solid #b22222;padding-bottom:4px;">⚠️ Carácter orientativo</h3><p>Las capas incorporadas al visor constituyen una <strong>herramienta de apoyo para la consulta y detección inicial de posibles afecciones sectoriales</strong>. La presencia o ausencia de una capa, o la intersección de una actuación con ella, <strong>no determina por sí misma la obligación de solicitar un informe</strong>.</p><p>Asimismo, pueden existir informes sectoriales cuya necesidad no dependa principalmente de la localización geográfica de la actuación, como determinados informes en materia de <strong>telecomunicaciones</strong>.</p><p>La necesidad de solicitar un informe deberá determinarse en cada caso de acuerdo con la <strong>legislación vigente</strong> y los criterios establecidos por el <strong>organismo sectorial competente</strong>.</p><p style="background:#fff3cd;border:1px solid #ffe69c;padding:10px;border-radius:4px;"><strong>Importante:</strong> Los resultados obtenidos mediante el visor deben considerarse orientativos y <strong>no sustituyen la consulta de la normativa aplicable ni, cuando proceda, la consulta al organismo competente</strong>.</p></div></div>',
+content: '<div><h2 style="text-align:center;color:#fff;background-color:#364b5f;padding:10px;border-radius:4px;">Contenido del visor</h2><div style="padding:12px;font-family:Arial,sans-serif;line-height:1.5;"><h3>🎯 Finalidad del visor</h3><p>El visor cartográfico tiene como finalidad <strong>facilitar la identificación rápida de posibles afecciones a la planificación territorial derivadas de las competencias de distintos organismos de la Administración General del Estado (AGE) en el País Vasco</strong>, sirviendo como herramienta de apoyo para orientar sobre los posibles informes o consultas sectoriales que puedan resultar necesarios en una fase temprana de la planificación.</p><h3>📋 Información recogida</h3><p>El visor reúne, para el <strong>ámbito del País Vasco</strong>, diferentes capas de información territorial relacionadas con las principales materias en las que pueden existir afecciones derivadas de competencias de la Administración General del Estado. Algunas capas proceden de servicios OGC difundidos por los organismos competentes y otras son capas generadas específicamente para este visor.</p><h4>✈️ Aviación Civil</h4><ul><li>Envolvente de las servidumbres aeronáuticas</li><li>Servidumbres aeronáuticas para aerogeneradores</li><li>Municipios exentos de informe de Aviación Civil</li></ul><p>Permite identificar posibles afecciones derivadas de la normativa sobre <strong>servidumbres aeronáuticas</strong> y orientar sobre aquellos casos en los que pueda ser necesario consultar a la <strong>Dirección General de Aviación Civil</strong>. Estas capas proceden de los servicios WMS que difunde el Ministerio de Transportes a través de la plataforma PLINUR.</p><h4>🚆 Ferrocarriles</h4><ul><li>Red Ferroviaria de Interés General (RFIG) en servicio</li><li>Red Ferroviaria de Interés General (RFIG) fuera de servicio</li><li>Buffer de 100 m de ferrocarril existente en Euskadi</li><li>Buffer de 100 m en torno a los estudios informativos de ferrocarril aprobados definitivamente en Euskadi</li><li>Buffer de 100 m en torno a los estudios informativos de ferrocarril en tramitación o aprobados como avance en Euskadi</li></ul><p>Facilitan la identificación de actuaciones situadas sobre o en las proximidades de líneas ferroviarias pertenecientes a la <strong>Red Ferroviaria de Interés General (RFIG) o de estudios informativos aprobados o en tramitación</strong>. Las capas relativas a la RFIG proceden de los servicios WMS difundidos por ADIF en la plataforma IDEADIF. Las capas de buffer se han generado expresamente para este visor a partir de la RFIG y de los estudios informativos publicados y se pueden descargar a través del menú Gestor de Vectores del visor.</p><h4>🛡️ Defensa</h4><ul><li>Zonas de Interés para la Defensa Nacional (ZIDN) en Euskadi</li><li>Zonas de Seguridad de Defensa en Euskadi</li></ul><p>Permiten detectar posibles afecciones a <strong>instalaciones, terrenos o zonas vinculadas al Ministerio de Defensa</strong>. Se trata de capas generadas específicamente para este visor a partir de los diferentes reglamentos publicados en el BOE por el Ministerio de Defensa y se pueden descargar a través del menú Gestor de Vectores del visor.</p><h4>🌊 Costas</h4><ul><li>Dominio Público Marítimo-Terrestre (DPMT)</li></ul><p>Permite consultar el <strong>deslinde del Dominio Público Marítimo-Terrestre (DPMT)</strong>, identificando así actuaciones afectadas por la legislación de costas. Esta capa procede del servicio WMS difundido por la Dirección General de la Costa y el Mar a través de la IDE del Ministerio para la Transición Ecológica.</p><h4>💧 Confederaciones Hidrográficas</h4><ul><li>Ámbito de los organismos de cuenca</li></ul><p>Permite identificar los <strong>ámbitos territoriales de gestión de los organismos de cuenca</strong> con competencias en el País Vasco.</p><h4>🗺️ Límites administrativos</h4><p>Facilita la <strong>correcta localización y delimitación de las actuaciones objeto de consulta</strong>. Además, el visor, a través del gestor de capas, permite la carga temporal de ficheros vectoriales propios para analizar ámbitos específicos o incluso dibujarlos mediante el menú Gestor de Vectores.</p><h3>⚠️ Carácter orientativo</h3><p>Las capas incorporadas al visor constituyen una <strong>herramienta de apoyo para la consulta y detección inicial de posibles afecciones sectoriales y tienen carácter meramente orientativo</strong>. La presencia o ausencia de una capa, o la intersección de una actuación con ella, <strong>no determina por sí misma la obligación o exención de solicitar un informe</strong>.</p><p>Asimismo, pueden existir informes sectoriales cuya necesidad no dependa principalmente de la localización geográfica de la actuación, como determinados informes en materia de <strong>telecomunicaciones</strong>.</p><p>La necesidad de solicitar un informe deberá determinarse en cada caso de acuerdo con la <strong>legislación vigente</strong> y los criterios establecidos por el <strong>organismo sectorial competente</strong>.</p><br></div></div>',
                 }
             ],
             finalExtraContents: [
