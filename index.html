@@ -297,13 +297,18 @@
                     fill: {
                         color: 'rgba(41,128,185,1)',
                         isBase: false,
-                        opacity: 0.8,
+                        opacity: 0,
                     },
                     stroke: {
-                        color: '#D3D3D3',
-                        width: 2,
-                        isBase: false
+                        color: '#2980B9',
+                        width: 4,
+                        opacity: 1,
+                        pattern: {
+                        name: 'crosses',
+                        scale: 1.5
                     },
+    isBase: false
+},
                 }
             }),
         });
@@ -324,13 +329,18 @@
                     fill: {
                         color: 'rgba(230,126,34,1)',
                         isBase: false,
-                        opacity: 0.8,
+                        opacity: 0,
                     },
                     stroke: {
-                        color: '#D3D3D3',
-                        width: 2,
-                        isBase: false
+                    color: '#E67E22',
+                    width: 4,
+                    opacity: 1,
+                    pattern: {
+                    name: 'crosses',
+                    scale: 1.5
                     },
+                    isBase: false
+                     },
                 }
             }),
         });
